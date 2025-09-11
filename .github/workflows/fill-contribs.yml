@@ -1,0 +1,40 @@
+name: Fill GitHub contributions
+
+
+on:
+workflow_dispatch: {}
+
+
+jobs:
+fill:
+runs-on: ubuntu-latest
+steps:
+- name: Checkout
+uses: actions/checkout@v4
+with:
+persist-credentials: true
+fetch-depth: 0
+
+
+- name: Set up Git
+run: |
+git config user.name "${{ github.actor }}"
+git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+
+- name: Make script executable
+run: |
+chmod +x scripts/fill_contribs.sh
+
+
+- name: Run commit generator
+env:
+GITHUB_ACTOR: ${{ github.actor }}
+GITHUB_EMAIL: ${{ github.actor }}@users.noreply.github.com
+run: |
+./scripts/fill_contribs.sh
+
+
+- name: Push commits
+run: |
+git push origin HEAD:main
